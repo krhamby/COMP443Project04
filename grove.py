@@ -98,7 +98,7 @@ def parse_tokens(tokens):
 
 
 # Testing code
-if __name__ == "main":
+if __name__ == "__main__":
 
     while True:
         ln = input("Calc>> ")

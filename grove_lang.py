@@ -3,27 +3,27 @@ import importlib
 var_table = {}
 
 class GroveError(Exception):
-    def init(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         Exception.init(self, *args, **kwargs)
 
 class Expr:
     pass
 
 class Num(Expr):
-    def init(self, value):
+    def __init__(self, value):
         self.value = value
     def eval(self):
         return self.value
 
 class StringLiteral(Expr):
-    def init(self, value):
+    def __init__(self, value):
         self.value = value
     def eval(self):
         return self.value
 
 
 class Addition(Expr):
-    def init(self, child1, child2):
+    def __init__(self, child1, child2):
         if not isinstance(child1, Expr):
             raise ValueError(
                 "CALC: expected expression but received " + str(type(child1)))
@@ -38,7 +38,7 @@ class Addition(Expr):
 
 
 class Name(Expr):
-    def init(self, name):
+    def __init__(self, name):
         self.name = name
 
     def getName(self):
@@ -56,7 +56,7 @@ class Stmt:
 
 
 class Import(Stmt):
-    def init(self, moduleName):
+    def __init__(self, moduleName):
         self.moduleName = moduleName
 
     def eval(self):
@@ -68,7 +68,7 @@ class Import(Stmt):
 
 
 class SimpleAssignment(Stmt):
-    def init(self, varName, expr):
+    def __init__(self, varName, expr):
         if not isinstance(varName, Name):
             raise ValueError(
                 "CALC: expected variable name but received " + str(type(varName)))
@@ -83,11 +83,10 @@ class SimpleAssignment(Stmt):
 
 
 # some testing code
-if __name__ == "main":
+if __name__ == "__main__":
 
     assert(Num(3).eval() == 3)
     assert(Addition(Num(3), Num(10)).eval() == 13)
-    # assert(Subtraction(Num(3), Num(10)).eval() == -7)
 
     caught_error = False
     try:
@@ -95,10 +94,12 @@ if __name__ == "main":
     except ValueError:
         caught_error = True
     assert(caught_error)
+    
+    assert(StringLiteral("hi").eval() == "hi")
 
-    assert(Stmt(Name("foo"), Num(10)).eval() is None)
+    assert(SimpleAssignment(Name("foo"), Num(10)).eval() is None)
     assert(Name("foo").eval() == 10)
 
     # Try something more complicated
     # assert(Stmt(Name("foo"), Addition(Num(200), Subtraction(Num(4), Num(12)))).eval() is None)
-    assert(Name("foo").eval() == 192)
+    # assert(Name("foo").eval() == 192)
