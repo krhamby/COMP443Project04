@@ -1,5 +1,6 @@
 #exec(open("calc_lang.py").read())
 from grove_lang import *
+import re
 
 # Utility methods for handling parse errors
 
