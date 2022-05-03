@@ -37,8 +37,8 @@ def is_int(s):
     
 def is_string_literal(s):
     """ Takes a string and returns True if in can be converted to a string literal """
-    if ((s[0] != "\"") | (s[-1] != "\"")):
-        return False
+    # if ((s[0] != "\"") | (s[-1] != "\"")):
+    #     return False
     if len(s.split()) > 1:
         # raise GroveError("Strings literals should not have spaces in them")
         return False
@@ -84,7 +84,9 @@ def parse_tokens(tokens):
 
     if is_int(start):
         return (Num(int(start)), tokens[1:])
-    elif is_string_literal(start):
+    # checks if string literal
+    elif start[0] == "\"":
+        check(is_string_literal(start), "invalid string literal")
         return (StringLiteral(start), tokens[1:])
     elif start in ["+", "-"]:
         check(len(tokens) > 0)
@@ -109,11 +111,9 @@ def parse_tokens(tokens):
         expect(tokens[0], "=")
         (child, tokens) = parse_tokens(tokens[1:])
         return (SimpleAssignment(varname, child), tokens)
-    
     #TODO: do for import
     elif start == "import":
         pass
-    
     # TODO: implement method calls
     elif start == "call":
         check(len(tokens) > 0)
@@ -128,7 +128,8 @@ def parse_tokens(tokens):
             (result , tokens) = parse_tokens(tokens[1:])
             check(is_expr(result))
             args.append(result)
-        return (MethodCall(varName, method, args), tokens)
+        expect(tokens[0], ")")
+        return (MethodCall(varName, method, args), tokens[1:])
             
     else:
         check(start[0].isalpha(), "Variable names must start with alphabetic characters")
