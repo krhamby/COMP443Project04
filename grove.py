@@ -88,7 +88,7 @@ def parse_tokens(tokens):
     # checks if string literal
     elif start[0] == "\"":
         check(is_string_literal(start), "invalid string literal")
-        return (StringLiteral(start), tokens[1:])
+        return (StringLiteral(start.strip("\"")), tokens[1:])
     elif start in ["+", "-"]:
         check(len(tokens) > 0)
         expect(tokens[1], "(")
@@ -131,10 +131,10 @@ def parse_tokens(tokens):
             (result , tokens) = parse_tokens(tokens[0:])
             is_expr(result)
             args.append(result)
-        return (MethodCall(varName, method, args), tokens[2:])
+        return (MethodCall(varName, method, args), tokens[1:])
             
     else:
-        print(start[0])
+        # print(start[0])
         check((start[0].isalpha() or start[0] == "_"), "Variable names must start with alphabetic characters")
         check(re.match(r'^\w+$', start), "Variable names must be alphanumeric characters or _ only")
 
