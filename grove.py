@@ -130,7 +130,6 @@ def parse_tokens(tokens):
             (result , tokens) = parse_tokens(tokens[1:])
             check(is_expr(result))
             args.append(result)
-        expect(tokens[0], ")")
         return (MethodCall(varName, method, args), tokens[1:])
             
     else:
