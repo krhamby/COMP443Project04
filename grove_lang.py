@@ -1,5 +1,6 @@
 ## Parse tree nodes for the Calc language
 import importlib
+import sys
 var_table = {}
 
 
@@ -71,8 +72,7 @@ class Import(Stmt):
                 self.moduleName)
         except Exception:
             raise GroveError("Invalid module name for import")
-
-
+    
 class SimpleAssignment(Stmt):
     def __init__(self, varName, expr):
         if not isinstance(varName, Name):
@@ -86,8 +86,7 @@ class SimpleAssignment(Stmt):
 
     def eval(self):
         var_table[self.varName.getName()] = self.expr.eval()
-
-
+        
  # TODO: implement MethodCall
 class MethodCall(Expr):
     pass

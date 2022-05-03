@@ -111,19 +111,17 @@ def parse_tokens(tokens):
         expect(tokens[0], "=")
         (child, tokens) = parse_tokens(tokens[1:])
         return (SimpleAssignment(varname, child), tokens)
-    
     #TODO: do for import
     elif start == "import":
         pass
-    
     # TODO: implement method calls
     elif start == "call":
         check(len(tokens) > 0)
         expect(tokens[1], "(")
-        check(is_global_var(Name(tokens[2])), "'" + tokens[2] + "' is not a variable") # TODO: pick up debugging here
+        check(is_global_var(tokens[2]), "'" + tokens[2] + "' is not a variable") # TODO: pick up debugging here
         (varname, tokens) = parse_tokens(tokens[2:])  
         check(len(tokens) > 0)
-        check(method_exists(varname, tokens[0]), "Method '" + tokens[0] + "' does not exist")
+        check(method_exists(varname.eval(), parse(tokens[0])), "Method '" + tokens[0] + "' does not exist")
         (method, tokens) = parse_tokens(tokens[1:])
         args = []
         while tokens[0] != ")" and tokens[1:] != []:
@@ -131,10 +129,9 @@ def parse_tokens(tokens):
             check(is_expr(result))
             args.append(result)
         # TODO: these args need to be evaluated
-        # or something needs to be returned with MethodCall
-            
-              
-
+        # or something needs to be returned with MethodCall          
+    elif ((start == "quit") | (start == "exit")):
+        sys.exit()
     else:
         check(start[0].isalpha(), "Variable names must start with alphabetic characters")
         check(re.match(r'^\w+$', start), "Variable names must be alphanumeric characters or _ only")
