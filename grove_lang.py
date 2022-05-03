@@ -56,6 +56,9 @@ class Name(Expr):
             return var_table[self.name]
         else:
             raise GroveError("GroveError: undefined variable " + self.name)
+        
+    # def __str__(self):
+    #     str(self.name)
 
 
 class Stmt:
@@ -105,7 +108,6 @@ class MethodCall(Expr):
         self.args = args
     
     def eval(self):
-        var = self.varName
         return self.varName.eval().__getattribute__(self.method.name)(*self.args)
         
         
