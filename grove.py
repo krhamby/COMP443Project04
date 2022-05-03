@@ -129,7 +129,8 @@ def parse_tokens(tokens):
             (result , tokens) = parse_tokens(tokens[1:])
             check(is_expr(result))
             args.append(result)
-        return (MethodCall(varName, method, args), tokens)
+        expect(tokens[0], ")")
+        return (MethodCall(varName, method, args), tokens[1:])
             
     else:
         check(start[0].isalpha(), "Variable names must start with alphabetic characters")
