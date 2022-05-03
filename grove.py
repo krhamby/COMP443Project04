@@ -48,14 +48,16 @@ def is_string_literal(s):
     
 def is_global_var(s):
     """ Takes a string and returns True if it can be converted to a global variable """
-    try:
-        Name(s).eval
-    except Exception:
+    if s in var_table:
+        return True
+    else:
         return False
     
 def method_exists(var, method):
     """ Returns True if the method exists for the var """
     methods = dir(var)
+    print(type(var)) # debugging
+    print(methods) # debugging
     if method in methods:
         return True
     else:
@@ -127,6 +129,7 @@ def parse_tokens(tokens):
             check(is_expr(result))
             args.append(result)
         # TODO: these args need to be evaluated
+        # or something needs to be returned with MethodCall
             
               
 
