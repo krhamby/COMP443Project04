@@ -35,12 +35,12 @@ def is_int(s):
     
 def is_string_literal(s):
     """ Takes a string and returns True if in can be converted to a string literal """
-    if ((s[0] != "\"") | (s[-1] != "\"")):
-        return False
+    # if ((s[0] != "\"") | (s[-1] != "\"")):
+    #     return False
     if len(s.split()) > 1:
         # raise GroveError("Strings literals should not have spaces in them")
         return False
-    if len(s.split("\""))>3:
+    if len(s.split("\""))>1:
         # raise GroveError("Extra quotation marks in string")
         return False
     else:
@@ -48,8 +48,9 @@ def is_string_literal(s):
     
 def is_global_var(s):
     """ Takes a string and returns True if it can be converted to a global variable """
+    
     try:
-        Name(s).eval
+        Name(s).eval()
     except Exception:
         return False
     
@@ -82,7 +83,9 @@ def parse_tokens(tokens):
 
     if is_int(start):
         return (Num(int(start)), tokens[1:])
-    elif is_string_literal(start):
+    # checks if string literal
+    elif start[0] == "\"":
+        check(is_string_literal(start), "invalid string literal")
         return (StringLiteral(start), tokens[1:])
     elif start in ["+", "-"]:
         check(len(tokens) > 0)
