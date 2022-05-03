@@ -108,7 +108,8 @@ class MethodCall(Expr):
         self.args = args
     
     def eval(self):
-        return self.varName.eval().__getattribute__(self.method.name)(*self.args)
+        evald_args = [ar.eval() for ar in self.args]
+        return self.varName.eval().__getattribute__(self.method.name)(*evald_args)
         
         
 
