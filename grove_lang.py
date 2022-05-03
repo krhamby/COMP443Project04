@@ -25,10 +25,10 @@ class StringLiteral(Expr):
 class Addition(Expr):
     def __init__(self, child1, child2):
         if not isinstance(child1, Expr):
-            raise ValueError(
+            raise GroveError(
                 "CALC: expected expression but received " + str(type(child1)))
         if not isinstance(child2, Expr):
-            raise ValueError(
+            raise GroveError(
                 "CALC: expected expression but received " + str(type(child2)))
         self.child1 = child1
         self.child2 = child2

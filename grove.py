@@ -33,10 +33,14 @@ def is_int(s):
         return False
     
 def is_string_literal(s):
-    """ Takes a string and returns True if in can be converted to a string liter """
-    if len(s.split()) > 1:
+    """ Takes a string and returns True if in can be converted to a string literal """
+    if ((s[0] != "\"") | (s[-1] != "\"")):
         return False
-    if len(s.split("\""))>1:
+    if len(s.split()) > 1:
+        # raise GroveError("Strings literals should not have spaces in them")
+        return False
+    if len(s.split("\""))>3:
+        # raise GroveError("Extra quotation marks in string")
         return False
     else:
         return True
@@ -62,6 +66,8 @@ def parse_tokens(tokens):
 
     if is_int(start):
         return (Num(int(start)), tokens[1:])
+    elif is_string_literal(start):
+        return (StringLiteral(start), tokens[1:])
     elif start in ["+", "-"]:
         check(len(tokens) > 0)
         expect(tokens[1], "(")
