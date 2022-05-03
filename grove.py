@@ -122,9 +122,9 @@ def parse_tokens(tokens):
         (varName, tokens) = parse_tokens(tokens[2:])  
         check(len(tokens) > 0)
         check(method_exists(varName, tokens[0]), "Method '" + tokens[0] + "' does not exist")
-        method = tokens[0]
+        (method, tokens) = parse_tokens(tokens[0:])
         args = []
-        while tokens[1] != ")" and tokens[1:] != []:
+        while tokens[0] != ")" and tokens[1:] != []:
             (result , tokens) = parse_tokens(tokens[1:])
             check(is_expr(result))
             args.append(result)
