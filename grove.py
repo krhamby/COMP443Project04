@@ -31,7 +31,15 @@ def is_int(s):
         return True
     except ValueError:
         return False
-
+    
+def is_string_literal(s):
+    """ Takes a string and returns True if in can be converted to a string liter """
+    if len(s.split()) > 1:
+        return False
+    if len(s.split("\""))>1:
+        return False
+    else:
+        return True
 
 def parse(s):
     """ Return an object representing a parsed command

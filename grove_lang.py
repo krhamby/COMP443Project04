@@ -12,15 +12,14 @@ class Expr:
 class Num(Expr):
     def init(self, value):
         self.value = value
-
     def eval(self):
         return self.value
 
-#TODO String
-
-
-class String(Expr):
-    pass
+class StringLiteral(Expr):
+    def init(self, value):
+        self.value = value
+    def eval(self):
+        return self.value
 
 
 class Addition(Expr):
