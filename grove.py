@@ -111,9 +111,11 @@ def parse_tokens(tokens):
         expect(tokens[0], "=")
         (child, tokens) = parse_tokens(tokens[1:])
         return (SimpleAssignment(varname, child), tokens)
+    
     #TODO: do for import
     elif start == "import":
         pass
+    
     # TODO: implement method calls
     elif start == "call":
         check(len(tokens) > 0)
