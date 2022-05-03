@@ -87,6 +87,16 @@ class SimpleAssignment(Stmt):
     def eval(self):
         var_table[self.varName.getName()] = self.expr.eval()
         
+
+# class Argument(Expr):
+#     def __init__(self, value):
+#         self.argName = argName
+        
+#     def eval(self, value):
+#         if self.argName in var_table:
+#             return Name(self.value().eval())
+#         else if glo
+    
  # TODO: implement MethodCall
 class MethodCall(Expr):
     def __init__(self, varName, method, args):
