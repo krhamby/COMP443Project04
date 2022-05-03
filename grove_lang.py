@@ -90,7 +90,16 @@ class SimpleAssignment(Stmt):
 
  # TODO: implement MethodCall
 class MethodCall(Expr):
-    pass
+    def __init__(self, varName, method, args):
+        self.varName = varName
+        self.method = method
+        self.args = args
+    
+    def eval(self):
+        var = self.varName.eval()
+        return var.__getattribute__(self.method)(*self.args)
+        
+        
 
 
 # some testing code

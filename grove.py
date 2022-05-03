@@ -1,5 +1,7 @@
 #exec(open("calc_lang.py").read())
 import sys
+
+from sqlalchemy import null
 from grove_lang import *
 import re
 
@@ -56,8 +58,6 @@ def is_global_var(s):
 def method_exists(var, method):
     """ Returns True if the method exists for the var """
     methods = dir(var)
-    print(type(var)) # debugging
-    print(methods) # debugging
     if method in methods:
         return True
     else:
@@ -119,20 +119,18 @@ def parse_tokens(tokens):
         check(len(tokens) > 0)
         expect(tokens[1], "(")
         check(is_global_var(tokens[2]), "'" + tokens[2] + "' is not a variable") # TODO: pick up debugging here
-        (varname, tokens) = parse_tokens(tokens[2:])  
+        (varName, tokens) = parse_tokens(tokens[2:])  
         check(len(tokens) > 0)
-        check(method_exists(varname, tokens[0]), "Method '" + tokens[0] + "' does not exist")
+        check(method_exists(varName.eval(), tokens[0]), "Method '" + tokens[0] + "' does not exist")
+        print(tokens[1:]) # debugging
         (method, tokens) = parse_tokens(tokens[1:])
         args = []
         while tokens[0] != ")" and tokens[1:] != []:
             (result , tokens) = parse_tokens(tokens[1:])
             check(is_expr(result))
             args.append(result)
-        # TODO: these args need to be evaluated
-        # or something needs to be returned with MethodCall
+        return (MethodCall(varName, method, args), tokens)
             
-              
-
     else:
         check(start[0].isalpha(), "Variable names must start with alphabetic characters")
         check(re.match(r'^\w+$', start), "Variable names must be alphanumeric characters or _ only")
@@ -146,11 +144,11 @@ def parse_tokens(tokens):
 if __name__ == "__main__":
 
     while True:
-        try:
+        # try:
             ln = input("Grove>> ")
             root = parse(ln)
             res = root.eval()
             if not res is None:
                 print(res)
-        except GroveError:
-            print(str(sys.exc_info()[1]))
+        # except GroveError:
+        #     print(str(sys.exc_info()[1]))
