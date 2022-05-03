@@ -104,7 +104,7 @@ def parse_tokens(tokens):
         #     return ( Subtraction(child1, child2), tokens[1:] )
     elif start == "set":
         check(len(tokens) > 0)
-        check(tokens[1][0].isalpha(), "Variable names must start with alphabetic characters")
+        check((tokens[1][0].isalpha() or tokens[1][0] == "_"), "Variable names must start with alphabetic characters")
         check(re.match(r'^\w+$', tokens[1]), "Variable names must be alphanumeric characters or _ only")
         (varname, tokens) = parse_tokens(tokens[1:])
         check(len(tokens) > 0)
@@ -132,7 +132,7 @@ def parse_tokens(tokens):
         return (MethodCall(varName, method, args), tokens[1:])
             
     else:
-        check(start[0].isalpha(), "Variable names must start with alphabetic characters")
+        check((start[0].isalpha() or start[0] == "_"), "Variable names must start with alphabetic characters")
         check(re.match(r'^\w+$', start), "Variable names must be alphanumeric characters or _ only")
 
         return (Name(start), tokens[1:])
