@@ -1,4 +1,5 @@
 #exec(open("calc_lang.py").read())
+
 import sys
 
 from sqlalchemy import null
@@ -127,13 +128,13 @@ def parse_tokens(tokens):
         (method, tokens) = parse_tokens(tokens[0:])
         args = []
         while tokens[0] != ")" and tokens[1:] != []:
-            (result , tokens) = parse_tokens(tokens[1:])
-            check(is_expr(result))
+            (result , tokens) = parse_tokens(tokens[0:])
+            is_expr(result)
             args.append(result)
-        expect(tokens[0], ")")
-        return (MethodCall(varName, method, args), tokens[1:])
+        return (MethodCall(varName, method, args), tokens[2:])
             
     else:
+        print(start[0])
         check((start[0].isalpha() or start[0] == "_"), "Variable names must start with alphabetic characters")
         check(re.match(r'^\w+$', start), "Variable names must be alphanumeric characters or _ only")
 
