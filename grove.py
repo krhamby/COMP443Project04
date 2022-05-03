@@ -40,7 +40,7 @@ def is_string_literal(s):
     if len(s.split()) > 1:
         # raise GroveError("Strings literals should not have spaces in them")
         return False
-    if len(s.split("\""))>1:
+    if len(s.split("\""))>3:
         # raise GroveError("Extra quotation marks in string")
         return False
     else:
@@ -119,7 +119,7 @@ def parse_tokens(tokens):
     elif start == "call":
         check(len(tokens) > 0)
         expect(tokens[1], "(")
-        check(is_global_var(tokens[2]), "'" + tokens[2] + "' is not a variable") # TODO: pick up debugging here
+        check(is_global_var(Name(tokens[2])), "'" + tokens[2] + "' is not a variable") # TODO: pick up debugging here
         (varname, tokens) = parse_tokens(tokens[2:])  
         check(len(tokens) > 0)
         check(method_exists(varname, tokens[0]), "Method '" + tokens[0] + "' does not exist")
