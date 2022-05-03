@@ -2,22 +2,28 @@
 import importlib
 var_table = {}
 
+
 class GroveError(Exception):
     def __init__(self, *args, **kwargs):
-        Exception.init(self, *args, **kwargs)
+        Exception.__init__(self, *args, **kwargs)
+
 
 class Expr:
     pass
 
+
 class Num(Expr):
     def __init__(self, value):
         self.value = value
+
     def eval(self):
         return self.value
+
 
 class StringLiteral(Expr):
     def __init__(self, value):
         self.value = value
+
     def eval(self):
         return self.value
 
@@ -25,11 +31,11 @@ class StringLiteral(Expr):
 class Addition(Expr):
     def __init__(self, child1, child2):
         if not isinstance(child1, Expr):
-            raise ValueError(
-                "CALC: expected expression but received " + str(type(child1)))
+            raise GroveError(
+                "GROVE: expected expression but received " + str(type(child1)))
         if not isinstance(child2, Expr):
-            raise ValueError(
-                "CALC: expected expression but received " + str(type(child2)))
+            raise GroveError(
+                "GROVE: expected expression but received " + str(type(child2)))
         self.child1 = child1
         self.child2 = child2
 
@@ -48,7 +54,7 @@ class Name(Expr):
         if self.name in var_table:
             return var_table[self.name]
         else:
-            raise ValueError("CALC: undefined variable " + self.name)
+            raise GroveError("GROVE: undefined variable " + self.name)
 
 
 class Stmt:
@@ -70,11 +76,11 @@ class Import(Stmt):
 class SimpleAssignment(Stmt):
     def __init__(self, varName, expr):
         if not isinstance(varName, Name):
-            raise ValueError(
-                "CALC: expected variable name but received " + str(type(varName)))
+            raise GroveError(
+                "GROVE: expected variable name but received " + str(type(varName)))
         if not isinstance(expr, Expr):
-            raise ValueError(
-                "CALC: expected expression but received " + str(type(expr)))
+            raise GroveError(
+                "GROVE: expected expression but received " + str(type(expr)))
         self.varName = varName
         self.expr = expr
 
@@ -91,10 +97,10 @@ if __name__ == "__main__":
     caught_error = False
     try:
         print(Name("nope").eval())
-    except ValueError:
+    except GroveError:
         caught_error = True
     assert(caught_error)
-    
+
     assert(StringLiteral("hi").eval() == "hi")
 
     assert(SimpleAssignment(Name("foo"), Num(10)).eval() is None)

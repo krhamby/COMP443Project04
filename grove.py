@@ -1,4 +1,5 @@
 #exec(open("calc_lang.py").read())
+import sys
 from grove_lang import *
 import re
 
@@ -6,14 +7,14 @@ import re
 
 
 def check(condition, message="Unexpected end of expression"):
-    """ Checks if condition is true, raising a ValueError otherwise """
+    """ Checks if condition is true, raising a GroveError otherwise """
     if not condition:
-        raise ValueError("CALC: " + message)
+        raise GroveError("GroveError: " + message)
 
 
 def expect(token, expected):
     """ Checks that token matches expected
-        If not, throws a ValueError with explanatory message """
+        If not, throws a GroveError with explanatory message """
     if token != expected:
         check(False, "Expected '" + expected + "' but found '" + token + "'")
 
@@ -25,25 +26,40 @@ def is_expr(x):
 
 
 def is_int(s):
-    """ Takes a string and returns True if in can be converted to an integer """
+    """ Takes a string and returns True if it can be converted to an integer """
     try:
         int(s)
         return True
-    except ValueError:
+    except Exception:
         return False
     
 def is_string_literal(s):
-    """ Takes a string and returns True if in can be converted to a string liter """
+    """ Takes a string and returns True if it can be converted to a string literal """
     if len(s.split()) > 1:
         return False
     if len(s.split("\""))>1:
         return False
     else:
         return True
+    
+def is_global_var(s):
+    """ Takes a string and returns True if it can be converted to a global variable """
+    try:
+        Name(s).eval
+    except Exception:
+        return False
+    
+def method_exists(var, method):
+    """ Returns True if the method exists for the var """
+    methods = dir(var)
+    if method in methods:
+        return True
+    else:
+        return False
 
 def parse(s):
     """ Return an object representing a parsed command
-        Throws ValueError for improper syntax """
+        Throws GroveError for improper syntax """
     (root, remaining_tokens) = parse_tokens(s.split())
     check(len(remaining_tokens) == 0,
           "Expected end of command but found '" + " ".join(remaining_tokens) + "'")
@@ -85,9 +101,29 @@ def parse_tokens(tokens):
         expect(tokens[0], "=")
         (child, tokens) = parse_tokens(tokens[1:])
         return (SimpleAssignment(varname, child), tokens)
+    
     #TODO: do for import
     elif start == "import":
-        return
+        pass
+    
+    # TODO: implement method calls
+    elif start == "call":
+        check(len(tokens) > 0)
+        expect(tokens[1], "(")
+        check(is_global_var(tokens[2]), "'" + tokens[2] + "' is not a variable") # TODO: pick up debugging here
+        (varname, tokens) = parse_tokens(tokens[2:])  
+        check(len(tokens) > 0)
+        check(method_exists(varname, tokens[0]), "Method '" + tokens[0] + "' does not exist")
+        (method, tokens) = parse_tokens(tokens[1:])
+        args = []
+        while tokens[0] != ")" and tokens[1:] != []:
+            (result , tokens) = parse_tokens(tokens[1:])
+            check(is_expr(result))
+            args.append(result)
+        # TODO: these args need to be evaluated
+            
+              
+
     else:
         check(start[0].isalpha(), "Variable names must start with alphabetic characters")
         check(re.match(r'^\w+$', start), "Variable names must be alphanumeric characters or _ only")
@@ -101,8 +137,11 @@ def parse_tokens(tokens):
 if __name__ == "__main__":
 
     while True:
-        ln = input("Calc>> ")
-        root = parse(ln)
-        res = root.eval()
-        if not res is None:
-            print(res)
+        try:
+            ln = input("Grove>> ")
+            root = parse(ln)
+            res = root.eval()
+            if not res is None:
+                print(res)
+        except GroveError:
+            print(str(sys.exc_info()[1]))
