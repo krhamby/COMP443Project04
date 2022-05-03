@@ -1,0 +1,105 @@
+## Parse tree nodes for the Calc language
+import importlib
+var_table = {}
+
+class GroveError(Exception):
+    def init(self, *args, **kwargs):
+        Exception.init(self, *args, **kwargs)
+
+class Expr:
+    pass
+
+class Num(Expr):
+    def init(self, value):
+        self.value = value
+
+    def eval(self):
+        return self.value
+
+#TODO String
+
+
+class String(Expr):
+    pass
+
+
+class Addition(Expr):
+    def init(self, child1, child2):
+        if not isinstance(child1, Expr):
+            raise ValueError(
+                "CALC: expected expression but received " + str(type(child1)))
+        if not isinstance(child2, Expr):
+            raise ValueError(
+                "CALC: expected expression but received " + str(type(child2)))
+        self.child1 = child1
+        self.child2 = child2
+
+    def eval(self):
+        return self.child1.eval() + self.child2.eval()
+
+
+class Name(Expr):
+    def init(self, name):
+        self.name = name
+
+    def getName(self):
+        return self.name
+
+    def eval(self):
+        if self.name in var_table:
+            return var_table[self.name]
+        else:
+            raise ValueError("CALC: undefined variable " + self.name)
+
+
+class Stmt:
+    pass
+
+
+class Import(Stmt):
+    def init(self, moduleName):
+        self.moduleName = moduleName
+
+    def eval(self):
+        try:
+            globals()[self.moduleName] = importlib.import_module(
+                self.moduleName)
+        except Exception:
+            raise GroveError("Invalid module name for import")
+
+
+class SimpleAssignment(Stmt):
+    def init(self, varName, expr):
+        if not isinstance(varName, Name):
+            raise ValueError(
+                "CALC: expected variable name but received " + str(type(varName)))
+        if not isinstance(expr, Expr):
+            raise ValueError(
+                "CALC: expected expression but received " + str(type(expr)))
+        self.varName = varName
+        self.expr = expr
+
+    def eval(self):
+        var_table[self.varName.getName()] = self.expr.eval()
+
+
+# some testing code
+if __name__ == "main":
+
+    assert(Num(3).eval() == 3)
+    assert(Addition(Num(3), Num(10)).eval() == 13)
+    # assert(Subtraction(Num(3), Num(10)).eval() == -7)
+
+    caught_error = False
+    try:
+        print(Name("nope").eval())
+    except ValueError:
+        caught_error = True
+    assert(caught_error)
+
+    assert(Stmt(Name("foo"), Num(10)).eval() is None)
+    assert(Name("foo").eval() == 10)
+
+    # Try something more complicated
+    # assert(Stmt(Name("foo"), Addition(Num(200), Subtraction(Num(4), Num(12)))).eval() is None)
+    assert(Name("foo").eval() == 192)
