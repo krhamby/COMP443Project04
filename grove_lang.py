@@ -54,7 +54,7 @@ class Name(Expr):
         if self.name in var_table:
             return var_table[self.name]
         else:
-            raise GroveError("GROVE: undefined variable " + self.name)
+            raise GroveError("GroveError: undefined variable " + self.name)
 
 
 class Stmt:
@@ -77,15 +77,20 @@ class SimpleAssignment(Stmt):
     def __init__(self, varName, expr):
         if not isinstance(varName, Name):
             raise GroveError(
-                "GROVE: expected variable name but received " + str(type(varName)))
+                "GroveError: expected variable name but received " + str(type(varName)))
         if not isinstance(expr, Expr):
             raise GroveError(
-                "GROVE: expected expression but received " + str(type(expr)))
+                "GroveError: expected expression but received " + str(type(expr)))
         self.varName = varName
         self.expr = expr
 
     def eval(self):
         var_table[self.varName.getName()] = self.expr.eval()
+
+
+ # TODO: implement MethodCall
+class MethodCall(Expr):
+    pass
 
 
 # some testing code
