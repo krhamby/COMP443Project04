@@ -57,7 +57,7 @@ def is_global_var(s):
     
 def method_exists(var, method):
     """ Returns True if the method exists for the var """
-    methods = dir(var)
+    methods = dir(var.eval())
     if method in methods:
         return True
     else:
@@ -121,11 +121,10 @@ def parse_tokens(tokens):
         check(is_global_var(tokens[2]), "'" + tokens[2] + "' is not a variable") # TODO: pick up debugging here
         (varName, tokens) = parse_tokens(tokens[2:])  
         check(len(tokens) > 0)
-        check(method_exists(varName.eval(), tokens[0]), "Method '" + tokens[0] + "' does not exist")
-        print(tokens[1:]) # debugging
-        (method, tokens) = parse_tokens(tokens[1:])
+        check(method_exists(varName, tokens[0]), "Method '" + tokens[0] + "' does not exist")
+        method = tokens[0]
         args = []
-        while tokens[0] != ")" and tokens[1:] != []:
+        while tokens[1] != ")" and tokens[1:] != []:
             (result , tokens) = parse_tokens(tokens[1:])
             check(is_expr(result))
             args.append(result)
