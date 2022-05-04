@@ -1,10 +1,9 @@
 #exec(open("calc_lang.py").read())
 
-import sys
-
 # from sqlalchemy import null
 from grove_lang import *
 import re
+import sys
 
 # Utility methods for handling parse errors
 
@@ -12,7 +11,7 @@ import re
 def check(condition, message="Unexpected end of expression"):
     """ Checks if condition is true, raising a GroveError otherwise """
     if not condition:
-        raise GroveError("GroveError: " + message)
+        raise GroveError("GROVE: " + message)
 
 
 def expect(token, expected):
@@ -39,13 +38,12 @@ def is_int(s):
 
 def is_string_literal(s):
     """ Takes a string and returns True if in can be converted to a string literal """
-    # if ((s[0] != "\"") | (s[-1] != "\"")):
-    #     return False
+    
     if len(s.split()) > 1:
-        # raise GroveError("Strings literals should not have spaces in them")
+        raise GroveError("GROVE: string literals should not have spaces in them")
         return False
     if len(s.split("\"")) > 3:
-        # raise GroveError("Extra quotation marks in string")
+        raise GroveError("GROVE: extra quotation marks in string")
         return False
     else:
         return True
@@ -89,11 +87,14 @@ def parse_tokens(tokens):
 
     if is_int(start):
         return (Num(int(start)), tokens[1:])
+    
     # checks if string literal
     elif start[0] == "\"":
-        check(is_string_literal(start), "invalid string literal")
+        expect (start[-1], "\"")
+        check(is_string_literal(start), "GROVE: invalid string literal")
         return (StringLiteral(start.strip("\"")), tokens[1:])
-    elif start in ["+", "-"]:
+    
+    elif start == "+":
         check(len(tokens) > 0)
         expect(tokens[1], "(")
         (child1, tokens) = parse_tokens(tokens[2:])
@@ -103,16 +104,14 @@ def parse_tokens(tokens):
         (child2, tokens) = parse_tokens(tokens[2:])
         check(len(tokens) > 0)
         expect(tokens[0], ")")
-        if start == "+":
-            return (Addition(child1, child2), tokens[1:])
-        # else:
-        #     return ( Subtraction(child1, child2), tokens[1:] )
+        return (Addition(child1, child2), tokens[1:])
+    
     elif start == "set":
         check(len(tokens) > 0)
         check((tokens[1][0].isalpha() or tokens[1][0] == "_"),
-            "Variable names must start with alphabetic characters")
+            "GROVE: variable names must start with alphabetic characters")
         check(re.match(
-            r'^\w+$', tokens[1]), "Variable names must be alphanumeric characters or _ only")
+            r'^\w+$', tokens[1]), "GROVE: variable names must be alphanumeric characters or _ only")
         (varname, tokens) = parse_tokens(tokens[1:])
         check(len(tokens) > 0)
         expect(tokens[0], "=")
@@ -129,20 +128,20 @@ def parse_tokens(tokens):
 
     #TODO: do for import
     elif start == "import":
-        check(len(tokens) > 0, "No import specified")
+        check(len(tokens) > 0, "GROVE: no import specified")
         check((tokens[1][0].isalpha() or tokens[1][0] == "_"),
-            "Import module names must start with alphabetic characters or underscores")
+            "GROVE: import module names must start with alphabetic characters or underscores")
         check(re.match(
-            r'^\w+$', tokens[1]), "Variable names must be alphanumeric characters or _ only")
+            r'^\w+$', tokens[1]), "GROVE: import module names must be composed of alphanumeric characters or _ only")
         check(len(tokens[2:]) == 0, "Expected one argument in import statement, found " + str(len(tokens[1:])))
         (module, tokens) = parse_tokens(tokens[1:])
         
         
         return (Import(module), tokens[2:])
-
-    elif (start == "quit") | (start == "exit"):
+    elif (start in ["quit", "exit"]):
         sys.exit()
-    # TODO: implement method calls
+        
+    # parsing for method call objecss    
     elif start == "call":
         check(len(tokens) > 0)
         expect(tokens[1], "(")
@@ -165,9 +164,9 @@ def parse_tokens(tokens):
     else:
         # print(start[0])
         check((start[0].isalpha() or start[0] == "_"),
-              "Variable names must start with alphabetic characters")
+              "GROVE: variable names must start with alphabetic characters or _")
         check(re.match(r'^\w+$', start),
-              "Variable names must be alphanumeric characters or _ only")
+              "GROVE: variable names must be composed of alphanumeric characters or _ only")
 
         return (Name(start), tokens[1:])
 
