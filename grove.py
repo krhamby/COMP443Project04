@@ -120,7 +120,7 @@ def parse_tokens(tokens):
         
         # NOTE: tokens will have a length of one
         # TODO: add a complex variable assignment
-        if child.name == "new":
+        if type(child) == Name and child.name == "new":
             check(len(tokens) > 0)
             (child, tokens) = parse_tokens(tokens)
             return (ComplexAssignment(varname, child), tokens)
