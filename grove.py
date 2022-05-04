@@ -2,7 +2,7 @@
 
 import sys
 
-from sqlalchemy import null
+# from sqlalchemy import null
 from grove_lang import *
 import re
 
@@ -122,8 +122,8 @@ def parse_tokens(tokens):
         # TODO: add a complex variable assignment
         if type(child) == Name and child.name == "new":
             check(len(tokens) > 0)
-            (child, tokens) = parse_tokens(tokens)
-            return (ComplexAssignment(varname, child), tokens)
+            # (child, tokens) = parse_tokens(tokens)
+            return (ComplexAssignment(varname, tokens[0]), tokens[1:])
         else:
             return (SimpleAssignment(varname, child), tokens)
 

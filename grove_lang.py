@@ -97,19 +97,30 @@ class ComplexAssignment(Stmt):
         if not isinstance(varName, Name):
             raise GroveError(
                 "GroveError: expected variable name but received " + str(type(varName)))
-        if not isinstance(expr, Expr):
-            raise GroveError(
-                "GroveError: expected expression but received " + str(type(expr)))
+        # if not isinstance(expr, str):
+        #     raise GroveError(
+        #         "GroveError: expected expression but received " + str(type(expr)))
         self.varName = varName
         self.expr = expr
         
     def eval(self):
-        if self.expr.name.__contains__("."):
+        if self.expr.__contains__("."):
             # TODO: finish this
-            var_table[self.varName.getName()] = self.expr
+            names = self.expr.split(".")
+            container = globals()[names[0]]
+            
+            if isinstance(container, dict):
+                cls = container[names[1]]
+            else:
+                cls = getattr(container, names[1])
+            
+            obj = cls()
+            var_table[self.varName.getName()] = obj
+            
         else:
             # TODO: this does not throw an error but does not work
-            var_table[self.varName.getName()] = self.expr
+            obj = globals()[self.expr]()
+            var_table[self.varName.getName()] = obj
 
 # class Argument(Expr):
 #     def __init__(self, value):
