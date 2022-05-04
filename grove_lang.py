@@ -56,7 +56,7 @@ class Name(Expr):
             return var_table[self.name]
         else:
             raise GroveError("GroveError: undefined variable " + self.name)
-        
+
     # def __str__(self):
     #     str(self.name)
 
@@ -75,7 +75,8 @@ class Import(Stmt):
                 self.moduleName)
         except Exception:
             raise GroveError("Invalid module name for import")
-    
+
+
 class SimpleAssignment(Stmt):
     def __init__(self, varName, expr):
         if not isinstance(varName, Name):
@@ -89,29 +90,44 @@ class SimpleAssignment(Stmt):
 
     def eval(self):
         var_table[self.varName.getName()] = self.expr.eval()
+
+class ComplexAssignment(Stmt):
+    def __init__(self, varName, expr):
+        if not isinstance(varName, Name):
+            raise GroveError(
+                "GroveError: expected variable name but received " + str(type(varName)))
+        if not isinstance(expr, Expr):
+            raise GroveError(
+                "GroveError: expected expression but received " + str(type(expr)))
+        self.varName = varName
+        self.expr = expr
         
+    def eval(self):
+        if self.expr.name.__contains__("."):
+            pass
+        else:
+            # TODO: this does not throw an error
+            var_table[self.varName.getName()] = self.expr
 
 # class Argument(Expr):
 #     def __init__(self, value):
 #         self.argName = argName
-        
+
 #     def eval(self, value):
 #         if self.argName in var_table:
 #             return Name(self.value().eval())
 #         else if glo
-    
+
  # TODO: implement MethodCall
 class MethodCall(Expr):
     def __init__(self, varName, method, args):
         self.varName = varName
         self.method = method
         self.args = args
-    
+
     def eval(self):
         evald_args = [ar.eval() for ar in self.args]
         return self.varName.eval().__getattribute__(self.method.name)(*evald_args)
-        
-        
 
 
 # some testing code

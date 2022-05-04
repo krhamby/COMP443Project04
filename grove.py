@@ -35,7 +35,8 @@ def is_int(s):
         return True
     except Exception:
         return False
-    
+
+
 def is_string_literal(s):
     """ Takes a string and returns True if in can be converted to a string literal """
     # if ((s[0] != "\"") | (s[-1] != "\"")):
@@ -43,19 +44,21 @@ def is_string_literal(s):
     if len(s.split()) > 1:
         # raise GroveError("Strings literals should not have spaces in them")
         return False
-    if len(s.split("\""))>3:
+    if len(s.split("\"")) > 3:
         # raise GroveError("Extra quotation marks in string")
         return False
     else:
         return True
-    
+
+
 def is_global_var(s):
     """ Takes a string and returns True if it can be converted to a global variable """
     if s in var_table:
         return True
     else:
         return False
-    
+
+
 def method_exists(var, method):
     """ Returns True if the method exists for the var """
     methods = dir(var.eval())
@@ -63,6 +66,7 @@ def method_exists(var, method):
         return True
     else:
         return False
+
 
 def parse(s):
     """ Return an object representing a parsed command
@@ -105,40 +109,57 @@ def parse_tokens(tokens):
         #     return ( Subtraction(child1, child2), tokens[1:] )
     elif start == "set":
         check(len(tokens) > 0)
-        check((tokens[1][0].isalpha() or tokens[1][0] == "_"), "Variable names must start with alphabetic characters")
-        check(re.match(r'^\w+$', tokens[1]), "Variable names must be alphanumeric characters or _ only")
+        check((tokens[1][0].isalpha() or tokens[1][0] == "_"),
+            "Variable names must start with alphabetic characters")
+        check(re.match(
+            r'^\w+$', tokens[1]), "Variable names must be alphanumeric characters or _ only")
         (varname, tokens) = parse_tokens(tokens[1:])
         check(len(tokens) > 0)
         expect(tokens[0], "=")
         (child, tokens) = parse_tokens(tokens[1:])
-        return (SimpleAssignment(varname, child), tokens)
-    
+        
+        # NOTE: tokens will have a length of one
+        # TODO: add a complex variable assignment
+        if child.name == "new":
+            check(len(tokens) > 0)
+            (child, tokens) = parse_tokens(tokens)
+            return (ComplexAssignment(varname, child), tokens)
+        else:
+            return (SimpleAssignment(varname, child), tokens)
+
     #TODO: do for import
     elif start == "import":
         pass
-    
+
     elif (start == "quit" | start == "exit"):
         sys.exit()
+
     # TODO: implement method calls
     elif start == "call":
         check(len(tokens) > 0)
         expect(tokens[1], "(")
-        check(is_global_var(tokens[2]), "'" + tokens[2] + "' is not a variable") # TODO: pick up debugging here
-        (varName, tokens) = parse_tokens(tokens[2:])  
+        # TODO: pick up debugging here
+        check(is_global_var(tokens[2]), "'" +
+              tokens[2] + "' is not a variable")
+        (varName, tokens) = parse_tokens(tokens[2:])
         check(len(tokens) > 0)
-        check(method_exists(varName, tokens[0]), "Method '" + tokens[0] + "' does not exist")
+        check(method_exists(varName, tokens[0]),
+              "Method '" + tokens[0] + "' does not exist")
         (method, tokens) = parse_tokens(tokens[0:])
         args = []
         while tokens[0] != ")" and tokens[1:] != []:
-            (result , tokens) = parse_tokens(tokens[0:])
+            (result, tokens) = parse_tokens(tokens[0:])
             is_expr(result)
             args.append(result)
         return (MethodCall(varName, method, args), tokens[1:])
-            
+    elif start == "quit" or start == "exit":
+        sys.exit()
     else:
         # print(start[0])
-        check((start[0].isalpha() or start[0] == "_"), "Variable names must start with alphabetic characters")
-        check(re.match(r'^\w+$', start), "Variable names must be alphanumeric characters or _ only")
+        check((start[0].isalpha() or start[0] == "_"),
+              "Variable names must start with alphabetic characters")
+        check(re.match(r'^\w+$', start),
+              "Variable names must be alphanumeric characters or _ only")
 
         return (Name(start), tokens[1:])
 
@@ -150,10 +171,10 @@ if __name__ == "__main__":
 
     while True:
         # try:
-            ln = input("Grove>> ")
-            root = parse(ln)
-            res = root.eval()
-            if not res is None:
-                print(res)
+        ln = input("Grove>> ")
+        root = parse(ln)
+        res = root.eval()
+        if not res is None:
+            print(res)
         # except GroveError:
         #     print(str(sys.exc_info()[1]))
