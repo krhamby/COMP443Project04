@@ -68,7 +68,7 @@ def method_exists(var, method):
 
 def parse(s):
     """ Return an object representing a parsed command
-        Throws GroveError for improper syntax """        
+        Throws GroveError for improper syntax """   
     (root, remaining_tokens) = parse_tokens(s.split())
     check(len(remaining_tokens) == 0,
           "Expected end of command but found '" + " ".join(remaining_tokens) + "'")
@@ -128,7 +128,7 @@ def parse_tokens(tokens):
 
     #TODO: do for import
     elif start == "import":
-        check(len(tokens) > 0, "GROVE: no import specified")
+        check(len(tokens) > 1, "no import specified")
         check((tokens[1][0].isalpha() or tokens[1][0] == "_"),
             "GROVE: import module names must start with alphabetic characters or underscores")
         check(re.match(
@@ -143,9 +143,10 @@ def parse_tokens(tokens):
         
     # parsing for method call objecss    
     elif start == "call":
-        check(len(tokens) > 0)
+        check(len(tokens) > 1, "no method name specified")
         expect(tokens[1], "(")
         # TODO: pick up debugging here
+        check(len(tokens) > 2, "no arguments specified")
         check(is_global_var(tokens[2]), "'" +
               tokens[2] + "' is not a variable")
         (varName, tokens) = parse_tokens(tokens[2:])
