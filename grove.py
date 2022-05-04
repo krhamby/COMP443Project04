@@ -70,7 +70,7 @@ def method_exists(var, method):
 
 def parse(s):
     """ Return an object representing a parsed command
-        Throws GroveError for improper syntax """
+        Throws GroveError for improper syntax """        
     (root, remaining_tokens) = parse_tokens(s.split())
     check(len(remaining_tokens) == 0,
           "Expected end of command but found '" + " ".join(remaining_tokens) + "'")
@@ -129,7 +129,16 @@ def parse_tokens(tokens):
 
     #TODO: do for import
     elif start == "import":
-        pass
+        check(len(tokens) > 0, "No import specified")
+        check((tokens[1][0].isalpha() or tokens[1][0] == "_"),
+            "Import module names must start with alphabetic characters or underscores")
+        check(re.match(
+            r'^\w+$', tokens[1]), "Variable names must be alphanumeric characters or _ only")
+        check(len(tokens[2:]) == 0, "Expected one argument in import statement, found " + str(len(tokens[1:])))
+        (module, tokens) = parse_tokens(tokens[1:])
+        
+        
+        return (Import(module), tokens[2:])
 
     elif (start == "quit") | (start == "exit"):
         sys.exit()
@@ -169,11 +178,11 @@ def parse_tokens(tokens):
 if __name__ == "__main__":
 
     while True:
-        # try:
-        ln = input("Grove>> ")
-        root = parse(ln)
-        res = root.eval()
-        if not res is None:
-            print(res)
-        # except GroveError:
-        #     print(str(sys.exc_info()[1]))
+        try:
+            ln = input("Grove>> ")
+            root = parse(ln)
+            res = root.eval()
+            if not res is None:
+                print(res)
+        except GroveError:
+            print(str(sys.exc_info()[1]))

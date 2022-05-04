@@ -68,7 +68,7 @@ class Stmt:
 
 class Import(Stmt):
     def __init__(self, moduleName):
-        self.moduleName = moduleName
+        self.moduleName = moduleName.getName()
 
     def eval(self):
         try:
