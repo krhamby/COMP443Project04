@@ -131,9 +131,8 @@ def parse_tokens(tokens):
     elif start == "import":
         pass
 
-    elif (start == "quit" | start == "exit"):
+    elif (start == "quit") | (start == "exit"):
         sys.exit()
-
     # TODO: implement method calls
     elif start == "call":
         check(len(tokens) > 0)
