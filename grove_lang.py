@@ -1,5 +1,6 @@
 ## Parse tree nodes for the Calc language
 import importlib
+import pickle
 import sys
 var_table = {}
 
@@ -104,9 +105,10 @@ class ComplexAssignment(Stmt):
         
     def eval(self):
         if self.expr.name.__contains__("."):
-            pass
+            # TODO: finish this
+            var_table[self.varName.getName()] = self.expr
         else:
-            # TODO: this does not throw an error
+            # TODO: this does not throw an error but does not work
             var_table[self.varName.getName()] = self.expr
 
 # class Argument(Expr):
