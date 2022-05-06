@@ -11,7 +11,7 @@ import sys
 def check(condition, message="Unexpected end of expression"):
     """ Checks if condition is true, raising a GroveError otherwise """
     if not condition:
-        raise GroveError("GROVE: " + message)
+        raise GroveError("GroveError: " + message)
 
 
 def expect(token, expected):
@@ -40,10 +40,10 @@ def is_string_literal(s):
     """ Takes a string and returns True if in can be converted to a string literal """
     
     if len(s.split()) > 1:
-        raise GroveError("GROVE: string literals should not have spaces in them")
+        raise GroveError("GroveError: string literals should not have spaces in them")
         return False
     if len(s.split("\"")) > 3:
-        raise GroveError("GROVE: extra quotation marks in string")
+        raise GroveError("GroveError: extra quotation marks in string")
         return False
     else:
         return True

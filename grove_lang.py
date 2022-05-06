@@ -34,18 +34,18 @@ class Addition(Expr):
     def __init__(self, child1, child2):
         if not isinstance(child1, Expr):
             raise GroveError(
-                "GROVE: expected expression but received " + str(type(child1)))
+                "GroveError: expected expression but received " + str(type(child1)))
         if not isinstance(child2, Expr):
             raise GroveError(
-                "GROVE: expected expression but received " + str(type(child2)))
+                "GroveError: expected expression but received " + str(type(child2)))
         self.child1 = child1
         self.child2 = child2
-
+        
         try:
             self.child1.eval() + self.child2.eval()
         except:
             raise GroveError(
-                "GROVE: Addition is not defined for types " + str(type(self.child1.eval())) + " and " + str(type(self.child2.eval())))
+                "GroveError: Addition is not defined for types " + str(type(self.child1.eval())) + " and " + str(type(self.child2.eval())))
 
     def eval(self):
 
@@ -63,7 +63,7 @@ class Name(Expr):
         if self.name in var_table:
             return var_table[self.name]
         else:
-            raise GroveError("GROVE: undefined variable " + self.name)
+            raise GroveError("GroveError: undefined variable " + self.name)
 
 
 class Stmt:
@@ -79,17 +79,17 @@ class Import(Stmt):
             globals()[self.moduleName] = importlib.import_module(
                 self.moduleName)
         except Exception:
-            raise GroveError("GROVE: invalid module name for import")
+            raise GroveError("GroveError: invalid module name for import")
 
 
 class SimpleAssignment(Stmt):
     def __init__(self, varName, expr):
         if not isinstance(varName, Name):
             raise GroveError(
-                "GROVE: expected variable name but received " + str(type(varName)))
+                "GroveError: expected variable name but received " + str(type(varName)))
         if not isinstance(expr, Expr):
             raise GroveError(
-                "GROVE: expected expression but received " + str(type(expr)))
+                "GroveError: expected expression but received " + str(type(expr)))
         self.varName = varName
         self.expr = expr
 
@@ -101,7 +101,7 @@ class ComplexAssignment(Stmt):
     def __init__(self, varName, expr):
         if not isinstance(varName, Name):
             raise GroveError(
-                "GROVE: expected variable name but received " + str(type(varName)))
+                "GroveError: expected variable name but received " + str(type(varName)))
         self.varName = varName
         self.expr = expr
 
@@ -112,7 +112,7 @@ class ComplexAssignment(Stmt):
                 container = globals()[names[0]]
             except Exception:
                 raise GroveError(
-                    "GROVE: module '" + names[0] + "' does not exist")
+                    "GroveError: module '" + names[0] + "' does not exist")
 
             if isinstance(container, dict):
                 cls = container[names[1]]
@@ -127,7 +127,7 @@ class ComplexAssignment(Stmt):
                 obj = globals()[self.expr]()
             except Exception:
                 raise GroveError(
-                    "GROVE: object type does not exist")
+                    "GroveError: object type does not exist")
             var_table[self.varName.getName()] = obj
 
 
