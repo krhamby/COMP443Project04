@@ -40,7 +40,7 @@ class Addition(Expr):
                 "GROVE: expected expression but received " + str(type(child2)))
         self.child1 = child1
         self.child2 = child2
-        
+
         try:
             self.child1.eval() + self.child2.eval()
         except:
@@ -48,9 +48,8 @@ class Addition(Expr):
                 "GROVE: Addition is not defined for types " + str(type(self.child1.eval())) + " and " + str(type(self.child2.eval())))
 
     def eval(self):
-        
-        return self.child1.eval() + self.child2.eval()
 
+        return self.child1.eval() + self.child2.eval()
 
 
 class Name(Expr):
@@ -65,9 +64,6 @@ class Name(Expr):
             return var_table[self.name]
         else:
             raise GroveError("GROVE: undefined variable " + self.name)
-
-    # def __str__(self):
-    #     str(self.name)
 
 
 class Stmt:
@@ -100,37 +96,33 @@ class SimpleAssignment(Stmt):
     def eval(self):
         var_table[self.varName.getName()] = self.expr.eval()
 
+
 class ComplexAssignment(Stmt):
     def __init__(self, varName, expr):
         if not isinstance(varName, Name):
             raise GroveError(
                 "GROVE: expected variable name but received " + str(type(varName)))
-        # if not isinstance(expr, str):
-        #     raise GroveError(
-        #         "GroveError: expected expression but received " + str(type(expr)))
         self.varName = varName
         self.expr = expr
-        
+
     def eval(self):
         if self.expr.__contains__("."):
-            # TODO: finish this
             names = self.expr.split(".")
             try:
                 container = globals()[names[0]]
             except Exception:
                 raise GroveError(
                     "GROVE: module '" + names[0] + "' does not exist")
-            
+
             if isinstance(container, dict):
                 cls = container[names[1]]
             else:
                 cls = getattr(container, names[1])
-            
+
             obj = cls()
             var_table[self.varName.getName()] = obj
-            
+
         else:
-            # TODO: this does not throw an error but does not work
             try:
                 obj = globals()[self.expr]()
             except Exception:
@@ -138,16 +130,7 @@ class ComplexAssignment(Stmt):
                     "GROVE: object type does not exist")
             var_table[self.varName.getName()] = obj
 
-# class Argument(Expr):
-#     def __init__(self, value):
-#         self.argName = argName
 
-#     def eval(self, value):
-#         if self.argName in var_table:
-#             return Name(self.value().eval())
-#         else if glo
-
- # TODO: implement MethodCall
 class MethodCall(Expr):
     def __init__(self, varName, method, args):
         self.varName = varName

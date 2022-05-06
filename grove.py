@@ -91,7 +91,7 @@ def parse_tokens(tokens):
     # checks if string literal
     elif start[0] == "\"":
         expect (start[-1], "\"")
-        check(is_string_literal(start), "GROVE: invalid string literal")
+        check(is_string_literal(start), "invalid string literal")
         return (StringLiteral(start.strip("\"")), tokens[1:])
     
     elif start == "+":
@@ -109,9 +109,9 @@ def parse_tokens(tokens):
     elif start == "set":
         check(len(tokens) > 0)
         check((tokens[1][0].isalpha() or tokens[1][0] == "_"),
-            "GROVE: variable names must start with alphabetic characters")
+            "variable names must start with alphabetic characters")
         check(re.match(
-            r'^\w+$', tokens[1]), "GROVE: variable names must be alphanumeric characters or _ only")
+            r'^\w+$', tokens[1]), "variable names must be alphanumeric characters or _ only")
         (varname, tokens) = parse_tokens(tokens[1:])
         check(len(tokens) > 0)
         expect(tokens[0], "=")
@@ -130,9 +130,9 @@ def parse_tokens(tokens):
     elif start == "import":
         check(len(tokens) > 1, "no import specified")
         check((tokens[1][0].isalpha() or tokens[1][0] == "_"),
-            "GROVE: import module names must start with alphabetic characters or underscores")
+            "import module names must start with alphabetic characters or underscores")
         check(re.match(
-            r'^\w+$', tokens[1]), "GROVE: import module names must be composed of alphanumeric characters or _ only")
+            r'^\w+$', tokens[1]), "import module names must be composed of alphanumeric characters or _ only")
         check(len(tokens[2:]) == 0, "Expected one argument in import statement, found " + str(len(tokens[1:])))
         (module, tokens) = parse_tokens(tokens[1:])
         
@@ -163,18 +163,14 @@ def parse_tokens(tokens):
     elif start == "quit" or start == "exit":
         sys.exit()
     else:
-        # print(start[0])
         check((start[0].isalpha() or start[0] == "_"),
-              "GROVE: variable names must start with alphabetic characters or _")
+              "variable names must start with alphabetic characters or _")
         check(re.match(r'^\w+$', start),
-              "GROVE: variable names must be composed of alphanumeric characters or _ only")
+              "variable names must be composed of alphanumeric characters or _ only")
 
         return (Name(start), tokens[1:])
 
-    # TODO: parse the next part of the expression
 
-
-# Testing code
 if __name__ == "__main__":
 
     while True:
