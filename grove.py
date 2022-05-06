@@ -163,7 +163,6 @@ def parse_tokens(tokens):
     elif start == "quit" or start == "exit":
         sys.exit()
     else:
-        # print(start[0])
         check((start[0].isalpha() or start[0] == "_"),
               "variable names must start with alphabetic characters or _")
         check(re.match(r'^\w+$', start),
@@ -171,10 +170,7 @@ def parse_tokens(tokens):
 
         return (Name(start), tokens[1:])
 
-    # TODO: parse the next part of the expression
 
-
-# Testing code
 if __name__ == "__main__":
 
     while True:
